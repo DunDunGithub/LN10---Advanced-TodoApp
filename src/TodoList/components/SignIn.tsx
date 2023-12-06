@@ -21,8 +21,11 @@ interface SignInFormData {
     password: string;
 }
 
+let count = 0;
+
 const SignIn: React.FC = () => {
     // const navigate = useNavigate();
+
     const { register, handleSubmit } = useForm<SignInFormData>();
 
     const { isAuthenticated, login } = useAuth();
@@ -39,33 +42,25 @@ const SignIn: React.FC = () => {
     const onSubmit: SubmitHandler<SignInFormData> = async (data) => {
         try {
             setLoading(true);
-            // Make a request to your server for authentication
+
             const response = await axios.post('http://localhost:6869/login', {
                 "username": data.username,
                 "password": data.password.toString(),
             });
 
-            // Assuming the server returns a token in the response data
             const receivedToken = response.data.accessToken;
 
-            // Set the token in the state or wherever you want to manage it
+            setTimeout(() => {
+                setLoading(false);
+                login(receivedToken);
+                navigate('/todo');
+            }, 1000);
 
-
-            // Redirect to the home page after successful login
-            // setTimeout(() => {
-            //     setLoading(false);
-            //     login(receivedToken);
-            //     navigate('/todo');
-            // }, 3000);
-            login(receivedToken);
-            navigate('/todo');
         } catch (error) {
-            // Handle authentication error (e.g., display an error message)
-            console.error('Authentication failed', error);
-        }
-        finally {
             setLoading(false);
+            alert(`Authentication failed: ${error}`);
         }
+        
     };
 
     useEffect(() => {
@@ -75,6 +70,8 @@ const SignIn: React.FC = () => {
             navigate('/todo');
         }
     }, [isAuthenticated, navigate]);
+
+    console.log(count++, loading);
 
     return (
         <Container component="main" maxWidth="xs">
@@ -93,12 +90,15 @@ const SignIn: React.FC = () => {
                 <Typography component="h1" variant="h5">
                     Sign in
                 </Typography>
-                {loading ? (<Backdrop
-                    sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                    open={open}
-                >
-                    <CircularProgress color="inherit" />
-                </Backdrop>) :
+                {loading ? (<div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '100vh',
+                    margin: '-50%'
+                }}>
+                    <CircularProgress />
+                </div>) :
                     (<form onSubmit={handleSubmit(onSubmit)} noValidate={false}>
                         <TextField
                             margin="normal"
