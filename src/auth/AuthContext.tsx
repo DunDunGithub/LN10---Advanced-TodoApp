@@ -3,7 +3,7 @@ import { createContext, useContext, ReactNode, useState } from 'react';
 
 interface AuthContextProps {
     isAuthenticated: boolean;
-    login: (token: string) => void;
+    login: () => void;
     logout: () => void;
 }
 
@@ -13,16 +13,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
 
-    const login = (token: string) => {
+    const login = () => {
         setIsAuthenticated(true);
         // Optionally, you can save the token to localStorage or a cookie
-        localStorage.setItem('token', token);
+        localStorage.setItem('login', "success");
     };
 
     const logout = () => {
         /* logic to handle user logout */
         setIsAuthenticated(false);
-        localStorage.removeItem('token');
+        localStorage.removeItem('login');
     };
 
     return (

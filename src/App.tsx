@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import SignIn from './TodoList/components/SignIn';
 
 import { useAuth } from "./auth/AuthContext";
+import { CircularProgress } from "@mui/material";
 
 const App: React.FC = () => {
 
@@ -17,10 +18,10 @@ const App: React.FC = () => {
   useEffect(() => {
     const checkAuthentication = async () => {
       // Kiểm tra xem có accessToken trong localStorage không
-      const storedToken = localStorage.getItem('token');
+      const storedToken = localStorage.getItem('login');
 
       if (storedToken) {
-        login(storedToken);
+        login();
       } else {
         // Không có token trong localStorage, đăng xuất
         logout();
@@ -35,7 +36,7 @@ const App: React.FC = () => {
 
   if (loading) {
     // Hiển thị thông báo đang kiểm tra xác thực
-    return <div>Loading...</div>;
+    return <CircularProgress/>;
   }
 
   return (

@@ -9,11 +9,9 @@ import {
     Button,
     CssBaseline,
     CircularProgress,
-    Backdrop,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { useAuth } from '../../auth/AuthContext';
 
 interface SignInFormData {
@@ -31,36 +29,24 @@ const SignIn: React.FC = () => {
     const { isAuthenticated, login } = useAuth();
 
     const [loading, setLoading] = useState(false);
-    const [open, setOpen] = useState(false);
-
-    const handleOpen = () => {
-        setOpen(true);
-    };
 
     const navigate = useNavigate();
 
-    const onSubmit: SubmitHandler<SignInFormData> = async (data) => {
-        try {
+    const onSubmit: SubmitHandler<SignInFormData> = (data) => {
             setLoading(true);
 
-            const response = await axios.post('http://localhost:6869/login', {
-                "username": data.username,
-                "password": data.password.toString(),
-            });
-
-            const receivedToken = response.data.accessToken;
-
-            setTimeout(() => {
+            if(data.username === 'admin' && data.password === '123456'){
+                setTimeout(() => {
+                    setLoading(false);
+                    login();
+                    navigate('/todo');
+                }, 1000);
+            }
+            else{
                 setLoading(false);
-                login(receivedToken);
-                navigate('/todo');
-            }, 1000);
+                alert(`Authentication failed:`);
+            }
 
-        } catch (error) {
-            setLoading(false);
-            alert(`Authentication failed: ${error}`);
-        }
-        
     };
 
     useEffect(() => {
@@ -71,7 +57,6 @@ const SignIn: React.FC = () => {
         }
     }, [isAuthenticated, navigate]);
 
-    console.log(count++, loading);
 
     return (
         <Container component="main" maxWidth="xs">
